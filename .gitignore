@@ -1,0 +1,4 @@
+.data/*
+npm_modules/*
+./plugins/*
+!./plugins/wp-factchecker-claim-review

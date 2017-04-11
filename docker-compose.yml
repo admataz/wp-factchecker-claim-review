@@ -1,0 +1,36 @@
+version: '2'
+services:
+#  nginx-proxy:
+#    image: jwilder/nginx-proxy
+#    container_name: nginx-proxy
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
+  mysql:
+    image: mysql:latest
+    volumes:
+      - ".data/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
+    ports: 
+      - "3307:3306"
+  wordpress:
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_PASSWORD: password
+#      VIRTUAL_HOST: claimreview.local
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    volumes:
+      - ./plugins:/var/www/html/wp-content/plugins
+#    expose:
+#     - 80
+    ports:
+     - "8002:80"
+    
