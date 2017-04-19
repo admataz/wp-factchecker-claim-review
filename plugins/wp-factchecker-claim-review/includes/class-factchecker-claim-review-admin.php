@@ -593,8 +593,8 @@ class Factchecker_Claim_Review_Admin{
                 }
                 $this->save_custom_fields_data($post_id, $_POST);
             }
-            
-            if($post->post_type == 'post'){
+            $options = get_option('claimreview_content_options_options', array('supported_post_types'=>array()));
+            if(in_array($post->post_type, $options['supported_post_types'])) {
                 if ( !isset( $_POST['claim_review_selected_nonce'] ) || !wp_verify_nonce( $_POST['claim_review_selected_nonce'], basename( __FILE__ ) ) ){
                     return $post_id;
                 }
