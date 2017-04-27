@@ -100,7 +100,7 @@ class Factchecker_Claim_Review{
             $obj = array(
             '@context' => 'http://schema.org',
             '@type' => array('Review', 'ClaimReview'),
-            'author' => review_author,
+            'author' => $review_author,
             'datePublished' => get_the_date( 'c', $id ),
             'dateModified' => get_the_modified_date( 'c', $id ),
             'url' => get_post_permalink(),
@@ -127,12 +127,18 @@ class Factchecker_Claim_Review{
           $reviews[] = $obj;
         }
 
-        if(count($reviews == 1)){
-          $reviews = $reviews[0];
-        }
+        // if(count($reviews == 1)){
+        //   $reviews = $reviews[0];
+        // }
+
+        
 
         if(count($reviews)){
-          return '<script type="application/ld+json">'.wp_json_encode($reviews, JSON_UNESCAPED_SLASHES).'</script>';
+          $output = array_map(function($i){
+            return '<script type="application/ld+json">'.wp_json_encode($i, JSON_UNESCAPED_SLASHES).'</script>';
+          }, $reviews);
+
+          return implode("\n", $output);
         }
 
         return '';
@@ -141,7 +147,9 @@ class Factchecker_Claim_Review{
 
     public function hook_schema_jsonld(){
         global $post;
-        
+        if(!$post){
+            return;
+        }
         echo $this->get_claimreview_schema($post->ID);
         
         
