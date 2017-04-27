@@ -99,6 +99,13 @@ class Factchecker_Claim_Review_Admin{
           'claimreview_settings_admin', // Page
           'claimreview_schema_options_posts_group' // Section
         );
+        add_settings_field(
+          'ratings_range', // ID
+          'Ratings range labels - one per line', // Title
+          array($this, 'settingsfield_ratings_range'), // Callback
+          'claimreview_settings_admin', // Page
+          'claimreview_schema_options_posts_group' // Section
+        );
 
     }
     
@@ -174,7 +181,7 @@ class Factchecker_Claim_Review_Admin{
       
       $posttypes = get_post_types(array(), 'objects');
     	$options  = get_option('claimreview_schema_options_posts', array('supported_post_types'=>array()));
-	
+
 		if(empty($options['supported_post_types'])){
 			$options['supported_post_types'] = array();
 		}
@@ -194,6 +201,14 @@ class Factchecker_Claim_Review_Admin{
 
     }
     
+
+       public function settingsfield_ratings_range(){
+          $options  = get_option('claimreview_schema_options_posts', array());
+        printf(
+            '<textarea id="ratings_range" name="claimreview_schema_options_posts[ratings_range]" cols="20" rows="10">%s</textarea>',
+            isset( $options['ratings_range'] ) ? esc_attr( $options['ratings_range']) : ''
+        );
+    }
     
     
     public function setup_endpoints(){
@@ -369,7 +384,13 @@ class Factchecker_Claim_Review_Admin{
         $review_summary_meta_value = isset($postmeta['_claim_review_review_summary']) ? $postmeta['_claim_review_review_summary'][0] : '';
         $review_rating_meta_value = isset($postmeta['_claim_review_review_rating']) ? $postmeta['_claim_review_review_rating'][0] : '';
         
-
+        $inputoptions  = get_option('claimreview_schema_options_posts', array('ratings_range'=>''));
+        
+        if(empty(trim($inputoptions['ratings_range']))){
+          $ratingsoptions = ['1','2','3','4','5'];
+        } else {
+          $ratingsoptions = explode("\n", $inputoptions['ratings_range']);
+        }
        
         // wp_enqueue_style( 'jquery-ui-datepicker' );
         ?>
@@ -505,16 +526,12 @@ class Factchecker_Claim_Review_Admin{
               <td>
                 <?php
         // TODO: read this from a configurable range
-        $p=1;
         
-        while ($p <= 5):?>
-                  <input type="radio" name="review-rating" value="<?php echo $p?>" <?php if($review_rating_meta_value==$p):?> checked="checked"
-                  <?php endif ?>>
-                    <?php
-            echo $p;
-            $p++;
-            endwhile;
-            ?>
+        
+        foreach ($ratingsoptions as $p=>$label):?>
+                  <input type="radio" name="review-rating" value="<?php echo $p?>" <?php if($review_rating_meta_value==$p):?> checked="checked"<?php endif ?>>
+                    <?php echo $label;?>
+              <?php endforeach; ?>
               </td>
             </tr>
           </table>
@@ -533,9 +550,9 @@ class Factchecker_Claim_Review_Admin{
             }
 
 
-            if($new_value && '' == $meta_key){
+            if(($new_value || $new_value=='0') && '' == $meta_key){
                 add_post_meta( $post_id, $meta_key, $new_value, true);
-            } elseif ( $new_value && $new_value != $meta_value) {
+            } elseif ( ($new_value || $new_value=='0') && $new_value != $meta_value) {
                 update_post_meta( $post_id, $meta_key, $new_value);
             } elseif ( '' == $new_value ){
                 delete_post_meta( $post_id, $meta_key, $meta_value);
