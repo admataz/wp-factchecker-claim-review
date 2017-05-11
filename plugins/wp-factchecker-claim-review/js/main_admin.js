@@ -43,7 +43,7 @@ function getSearchOptions(req, res){
     return !itm.get('selected')
   })
   .filter(function(itm){
-    return itm.get('title').indexOf(req.term) != -1;
+    return itm.get('title').toLowerCase().indexOf(req.term.toLowerCase()) != -1;
   })
   .map(function(itm){
     return {
