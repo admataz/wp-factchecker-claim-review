@@ -377,11 +377,12 @@ class Factchecker_Claim_Review_Admin{
         $claim_quote_meta_value = isset($postmeta['_claim_review_claim_quote']) ? $postmeta['_claim_review_claim_quote'][0] : '';
         $claim_summary_meta_value = isset($postmeta['_claim_review_claim_summary']) ? $postmeta['_claim_review_claim_summary'][0] : '';
         $author_name_meta_value = isset($postmeta['_claim_review_author_name']) ? $postmeta['_claim_review_author_name'][0] : '';
+        $author_url_meta_value = isset($postmeta['_claim_review_author_url']) ? $postmeta['_claim_review_author_url'][0] : '';
         $author_type_meta_value = isset($postmeta['_claim_review_author_type']) ? $postmeta['_claim_review_author_type'][0] : '';
         $publication_name_meta_value = isset($postmeta['_claim_review_publication_name']) ? $postmeta['_claim_review_publication_name'][0] : '';
         $publication_url_meta_value = isset($postmeta['_claim_review_publication_url']) ? $postmeta['_claim_review_publication_url'][0] : '';
         $publication_date_meta_value = isset($postmeta['_claim_review_publication_date']) ? $postmeta['_claim_review_publication_date'][0] : '';
-        $review_summary_meta_value = isset($postmeta['_claim_review_review_summary']) ? $postmeta['_claim_review_review_summary'][0] : '';
+        // $review_summary_meta_value = isset($postmeta['_claim_review_review_summary']) ? $postmeta['_claim_review_review_summary'][0] : '';
         $review_rating_meta_value = isset($postmeta['_claim_review_review_rating']) ? $postmeta['_claim_review_review_rating'][0] : '';
         
         $inputoptions  = get_option('claimreview_schema_options_posts', array('ratings_range'=>''));
@@ -436,6 +437,15 @@ class Factchecker_Claim_Review_Admin{
               </th>
               <td>
                 <input type="text" name="author-name" id="author-name" class="regular-text" value="<?php echo $author_name_meta_value?>">
+              </td>
+            </tr>
+
+            <tr>
+              <th scope="row">
+                <label for="author-url">Author  URL (wikipedia or organisation website):</label>
+              </th>
+              <td>
+                <input type="text" name="author-url" id="author-url" class="regular-text" value="<?php echo $author_url_meta_value?>">
               </td>
             </tr>
 
@@ -510,22 +520,14 @@ class Factchecker_Claim_Review_Admin{
             <h2>Your Rating</h2></legend>
           <table class="form-table">
 
-            <tr>
-              <th scope="row">
-                <label for="review-summary">Summary:</label>
-              </th>
-              <td>
-                <textarea class="large-text" id="review-summary" name="review-summary" rows="6" style="max-width: 400px"><?php echo $review_summary_meta_value ?></textarea>
-              </td>
-            </tr>
+  
 
             <tr>
               <th scope="row">
-                <label for="review-summary">Rating:</label>
+                <label for="review-rating">Rating:</label>
               </th>
               <td>
                 <?php
-        // TODO: read this from a configurable range
         
         
         foreach ($ratingsoptions as $p=>$label):?>
@@ -648,6 +650,10 @@ class Factchecker_Claim_Review_Admin{
             $new_author_name_value = ( isset( $data['author-name']) ? sanitize_text_field( $data['author-name'] ) : '');
             $author_name_meta_key = '_claim_review_author_name';
             $this->save_custom_field_value($post_id, $author_name_meta_key, $postmeta, $new_author_name_value);
+
+            $new_author_url_value = ( isset( $data['author-url']) ? sanitize_text_field( $data['author-url'] ) : '');
+            $author_url_meta_key = '_claim_review_author_url';
+            $this->save_custom_field_value($post_id, $author_url_meta_key, $postmeta, $new_author_url_value);
             
             
             $new_author_type_value = ( isset( $data['author-type']) ? sanitize_text_field( $data['author-type'] ) : '');
@@ -673,9 +679,9 @@ class Factchecker_Claim_Review_Admin{
             $this->save_custom_field_value($post_id, $publication_date_meta_key, $postmeta, $new_publication_date_value);
             
             
-            $new_review_summary_value = ( isset( $data['review-summary']) ? sanitize_textarea_field( $data['review-summary'] ) : '');
-            $review_summary_meta_key = '_claim_review_review_summary';
-            $this->save_custom_field_value($post_id, $review_summary_meta_key, $postmeta, $new_review_summary_value);
+            // $new_review_summary_value = ( isset( $data['review-summary']) ? sanitize_textarea_field( $data['review-summary'] ) : '');
+            // $review_summary_meta_key = '_claim_review_review_summary';
+            // $this->save_custom_field_value($post_id, $review_summary_meta_key, $postmeta, $new_review_summary_value);
             
             
             $new_review_rating_value = ( isset( $data['review-rating']) ? sanitize_text_field( $data['review-rating'] ) : '');

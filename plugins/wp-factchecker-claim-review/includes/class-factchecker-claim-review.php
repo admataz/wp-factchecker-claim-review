@@ -60,6 +60,12 @@ class Factchecker_Claim_Review{
             } else {
                 $author_name_meta_value = '';
             }
+            $author_url_meta_key = '_claim_review_author_url';
+            if(is_array($postmeta[$author_name_meta_key]) && isset($postmeta[$author_name_meta_key][0])){
+                $author_url_meta_value = $postmeta[$author_url_meta_key][0];
+            } else {
+                $author_url_meta_value = '';
+            }
             $author_type_meta_key = '_claim_review_author_type';
             if(is_array($postmeta[$author_type_meta_key]) && isset($postmeta[$author_type_meta_key][0])){
                 $author_type_meta_value = $postmeta[$author_type_meta_key][0];
@@ -96,10 +102,17 @@ class Factchecker_Claim_Review{
             } else {
                 $review_rating_meta_value = '';
             }
+
+            $inputoptions  = get_option('claimreview_schema_options_posts', array('ratings_range'=>''));
+            if(empty(trim($inputoptions['ratings_range']))){
+                $ratingsoptions = ['1','2','3','4','5'];
+            } else {
+                $ratingsoptions = explode("\n", $inputoptions['ratings_range']);
+            }
             
             $obj = array(
             '@context' => 'http://schema.org',
-            '@type' => array('Review', 'ClaimReview'),
+            '@type' => 'ClaimReview',
             'author' => $review_author,
             'datePublished' => get_the_date( 'c', $id ),
             'dateModified' => get_the_modified_date( 'c', $id ),
@@ -110,26 +123,26 @@ class Factchecker_Claim_Review{
               '@type' => 'creativeWork',
               'author' => array(
                 '@type' =>  $author_type_meta_value,
-                'name' => $author_name_meta_value
+                'name' => $author_name_meta_value,
+                'sameAs' => $author_url_meta_value
               ),
               'url' => $publication_url_meta_value,
               'datePublished' => date('c', strtotime($publication_date_meta_value)
             ),
-            'reviewBody' => $review_summary_meta_value,
+            
+            ),
             'reviewRating' =>array(
               '@type' => 'Rating',
-              'alternateName' => '',
-              'ratingValue' => $review_rating_meta_value
-            )
-
+              'alternateName' => $ratingsoptions[$review_rating_meta_value],
+              'ratingValue' => $review_rating_meta_value,
+              'worstRating' => 1,
+              'bestRating' => count($ratingsoptions), 
             )
             );
           $reviews[] = $obj;
         }
 
-        // if(count($reviews == 1)){
-        //   $reviews = $reviews[0];
-        // }
+
 
         
 
@@ -151,13 +164,6 @@ class Factchecker_Claim_Review{
             return;
         }
         echo $this->get_claimreview_schema($post->ID);
-        
-        
-        
-        
-        
-        
-        
     }
     
     
@@ -171,9 +177,6 @@ class Factchecker_Claim_Review{
         )
         ) );
     }
-    
-    
-    
     
     
 }
