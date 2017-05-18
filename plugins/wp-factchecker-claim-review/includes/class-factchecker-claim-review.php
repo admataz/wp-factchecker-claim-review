@@ -100,7 +100,7 @@ class Factchecker_Claim_Review{
             if(is_array($postmeta[$review_rating_meta_key]) && isset($postmeta[$review_rating_meta_key][0])){
                 $review_rating_meta_value = $postmeta[$review_rating_meta_key][0];
             } else {
-                $review_rating_meta_value = '';
+                $review_rating_meta_value = 0;
             }
 
             $inputoptions  = get_option('claimreview_schema_options_posts', array('ratings_range'=>''));
@@ -134,7 +134,7 @@ class Factchecker_Claim_Review{
             'reviewRating' =>array(
               '@type' => 'Rating',
               'alternateName' => $ratingsoptions[$review_rating_meta_value],
-              'ratingValue' => $review_rating_meta_value,
+              'ratingValue' => $review_rating_meta_value + 1,
               'worstRating' => 1,
               'bestRating' => count($ratingsoptions), 
             )
