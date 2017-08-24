@@ -56,7 +56,7 @@ I think it's important to have this as a zero-dependency plugin, so it can have 
 - [ ] More configurable/complete Schema options
 - [ ] ... others? 
 
-Please raise any bugs or feature requests in [issues](./issues). 
+Please raise any bugs or feature requests in [issues](/admataz/wp-factchecker-claim-review/issues). 
 
 ## Copyright and License
 
